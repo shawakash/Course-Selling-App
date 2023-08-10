@@ -11,11 +11,16 @@ const userSchema = new mongoose.Schema({
   username: {type: String},
   password: String,
   purchasedCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }]
+}, {
+  timestamps: true
 });
 
 const adminSchema = new mongoose.Schema({
   username: String,
-  password: String
+  password: String,
+  createdCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
+}, {
+  timestamps: true
 });
 
 const courseSchema = new mongoose.Schema({
@@ -23,7 +28,11 @@ const courseSchema = new mongoose.Schema({
   description: String,
   price: Number,
   imageLink: String,
-  published: Boolean
+  published: Boolean,
+  creator: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+  subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+}, {
+  timestamps: true
 });
 
 // Define mongoose models

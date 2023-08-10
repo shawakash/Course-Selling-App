@@ -24,7 +24,7 @@ const Nav = () => {
                         <ul className="flex space-x-8">
                                 <Link to={"/"}><li className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Home</li></Link>
                                 <Link to={"/courses"}><li className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Courses</li></Link>
-                                <Link to={"/about"}><li className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Create</li></Link>
+                                <Link to={"/create"}><li className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Create</li></Link>
                                 {!state && <Link to={"/login"}><li className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Login</li></Link>}
                                 {!state && <Link to={"/register"}><li className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Register</li></Link>}
                                 {state && <li onClick={(e) => {

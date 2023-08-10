@@ -58,7 +58,8 @@ route.post('/signup', async (req, res) => {
     if (admin) {
         return res.status(403).json({ message: "username exists :)" });
     }
-    const object = new Admin({ username, password });
+    const createdCourses = [];
+    const object = new Admin({ username, password, createdCourses });
     await object.save();
     const token = jwt.sign({ username, id: object.id }, ADMIN_SECRET_KEY);
     return res.status(200).json({ message: 'Admin created successfully', token });
@@ -83,10 +84,18 @@ route.post('/login', async (req, res) => {
 
 route.post('/courses', adminAuth, async (req, res) => {
     // logic to create a course
-    const body = req.body;
-    const course = new Course({ ...body });
-    await course.save();
-    return res.status(200).json({ message: 'Course created successfully', courseId: course.id });
+    try {
+        const body = req.body;
+        const admin = req.admin;
+        const course = new Course({ ...body, creator: admin.id, subscribers: []  });
+        await course.save();
+        const updateAdmin = await Admin.findById(admin.id);
+        updateAdmin.createdCourses.push(course.id);
+        await updateAdmin.save();
+        return res.status(200).json({ message: 'Course created successfully', courseId: course.id });
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal Server Error', err: error });
+    }
 });
 
 route.put('/courses/:courseId', adminAuth, async (req, res) => {
@@ -102,8 +111,9 @@ route.put('/courses/:courseId', adminAuth, async (req, res) => {
 
 route.get('/courses', adminAuth, async (req, res) => {
     // logic to get all courses
-    const courses = await Course.find();
-    return res.status(200).json({ courses })
+    const authAdmin = req.admin;
+    const dbAdmin = await Admin.findById(authAdmin.id).populate("createdCourses").populate("subscribers");
+    return res.status(200).json({ courses: dbAdmin.createdCourses })
 });
 
 module.exports = route;

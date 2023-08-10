@@ -8,8 +8,8 @@ import { toast } from "react-hot-toast";
 
 /// File is incomplete. You need to add input boxes to take input for users to login.
 function Login() {
-    const [client, setClient] = useRecoilState(user);
-    const [loader, setloader] = useRecoilState(loading);
+    const setClient = useSetRecoilState(user);
+    const setloader = useSetRecoilState(loading);
     const navigate = useNavigate();
 
     const usernameRef = useRef(null);

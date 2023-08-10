@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 const Course = ({ course, updateDel = true }) => {
 
     const [upadate, setUpdate] = useState(false);
-    const [loader, setLoader] = useRecoilState(loading);
+    const setLoader = useSetRecoilState(loading);
     const navigate = useNavigate();
     const setLocalCourses = useSetRecoilState(localCourses);
     const [published, setPub] = useState(false);

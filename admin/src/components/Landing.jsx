@@ -1,17 +1,17 @@
 
-import React, { useEffect } from "react";
-import { useRecoilState, useRecoilValue, useRecoilValueLoadable, useSetRecoilState } from "recoil";
+import React from "react";
+import { useRecoilValueLoadable } from "recoil";
 import { coursesList, user } from "../recoil/atom";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Course from "./Course";
 
 /// This is the landing page. You need to add a link to the login page here.
 /// Maybe also check from the backend if the user is already logged in and then show them a logout button
 /// Logging a user out is as simple as deleting the token from the local storage.
 function Landing() {
-    const [client, setClient] = useRecoilState(user);
     const courses = useRecoilValueLoadable(coursesList);
-    function getRandomItemsFromArray(arr) {
+
+    const getRandomItemsFromArray = (arr) => {
         const minLength = 1; // Minimum length of the result array
         const maxLength = Math.min(arr.length, 5); // Maximum length of the result array (adjust as needed)
         

@@ -36,7 +36,7 @@ function App() {
                 >
                     <Route path="/" element={<Landing />} />
                     <Route path="/courses" element={<ShowCourses />} />
-                    <Route path="/about" element={<CreateCourse />} />
+                    <Route path="/create" element={<CreateCourse />} />
                     <Route path='/courses/:slug' element={<CoursePage />} />
                 </Route>
                 <Route path="*" element={<NoMatch />} />

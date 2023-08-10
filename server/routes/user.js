@@ -74,9 +74,11 @@ route.post('/courses/:courseId', userAuth, async (req, res) => {
     if (!course || course == {}) {
         return res.status(400).json({ message: "Invalid Params" });
     }
+    course.subscribers.push(userData.id);
     // Check for Transcations
     userData.purchasedCourses.push(course);
     await userData.save();
+    await course.save();
     return res.status(200).json({ message: 'Course purchased successfully' });
 });
 
