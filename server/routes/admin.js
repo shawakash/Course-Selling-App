@@ -61,7 +61,7 @@ route.post('/signup', async (req, res) => {
     const createdCourses = [];
     const object = new Admin({ username, password, createdCourses });
     await object.save();
-    const token = jwt.sign({ username, id: object.id }, ADMIN_SECRET_KEY);
+    const token = jwt.sign({ username, id: object._id }, ADMIN_SECRET_KEY);
     return res.status(200).json({ message: 'Admin created successfully', token });
 });
 
@@ -78,7 +78,7 @@ route.post('/login', async (req, res) => {
     if (isAdmin.password !== password) {
         return res.status(400).json({ message: "Password Error :(" });
     }
-    const token = jwt.sign({ username, id: isAdmin.id }, ADMIN_SECRET_KEY);
+    const token = jwt.sign({ username, id: isAdmin._id }, ADMIN_SECRET_KEY);
     return res.status(200).json({ message: "Logged in successfully", token });
 });
 
@@ -87,12 +87,12 @@ route.post('/courses', adminAuth, async (req, res) => {
     try {
         const body = req.body;
         const admin = req.admin;
-        const course = new Course({ ...body, creator: admin.id, subscribers: []  });
+        const course = new Course({ ...body, creator: admin.id, subscribers: [] });
         await course.save();
         const updateAdmin = await Admin.findById(admin.id);
-        updateAdmin.createdCourses.push(course.id);
+        updateAdmin.createdCourses.push(course._id);
         await updateAdmin.save();
-        return res.status(200).json({ message: 'Course created successfully', courseId: course.id });
+        return res.status(200).json({ message: 'Course created successfully', courseId: course._id });
     } catch (error) {
         return res.status(500).json({ message: 'Internal Server Error', err: error });
     }
@@ -115,5 +115,18 @@ route.get('/courses', adminAuth, async (req, res) => {
     const dbAdmin = await Admin.findById(authAdmin.id).populate("createdCourses").populate("subscribers");
     return res.status(200).json({ courses: dbAdmin.createdCourses })
 });
+
+app.delete("/courses/:courseId", adminAuth, async (req, res) => {
+    const {courseId} = req.params;
+    let course = await Course.findById(courseId);
+    if (!course || course.length == 0) {
+        return res.status(404).json({ message: "Course not found" });
+    }
+    if(course.published == true) {
+        return res.status(400).json({message: "Cannot Delete a published Course"})
+    }
+    const deletedCourse = await Course.findByIdAndDelete(course);
+    return res.status(200).json({message: "Course Deleted Successfully :)"})
+})
 
 module.exports = route;

@@ -35,7 +35,7 @@ route.post('/signup', async (req, res) => {
     }
     const object = new User({ username, password });
     await object.save();
-    const token = jwt.sign({ username, id: object.id }, USER_SECRET_KEY);
+    const token = jwt.sign({ username, id: object._id }, USER_SECRET_KEY);
     return res.status(200).json({ message: 'User created successfully', token });
 });
 
@@ -52,7 +52,7 @@ route.post('/login', async (req, res) => {
     if (isUser.password !== password) {
         return res.status(400).json({ message: "Password Error :(" });
     }
-    const token = jwt.sign({ username, id: isUser.id }, USER_SECRET_KEY);
+    const token = jwt.sign({ username, id: isUser._id }, USER_SECRET_KEY);
     return res.status(200).json({ message: "Logged in successfully", token });
 });
 
@@ -74,7 +74,7 @@ route.post('/courses/:courseId', userAuth, async (req, res) => {
     if (!course || course == {}) {
         return res.status(400).json({ message: "Invalid Params" });
     }
-    course.subscribers.push(userData.id);
+    course.subscribers.push(userData._id);
     // Check for Transcations
     userData.purchasedCourses.push(course);
     await userData.save();
