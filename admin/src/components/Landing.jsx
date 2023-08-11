@@ -23,13 +23,14 @@ function Landing() {
         return shuffledArr.slice(0, randomLength);
       }
       let featuredCourses;
-      if(courses.state == 'hasValue') {
-          featuredCourses = getRandomItemsFromArray(courses.contents);
+      if(courses.state == 'hasValue' && courses.contents) {
+        console.log(courses)
+          featuredCourses = getRandomItemsFromArray(courses.contents) || [];
       }
 
     return (
         <>
-            <div className="bg-gray-100 min-h-screen">
+            {courses.state == "hasValue" && <div className="bg-gray-100 min-h-screen">
 
                 {/* Hero Section */}
                 <section className="py-20 bg-gradient-to-r from-blue-500 to-blue-700 text-white">
@@ -53,7 +54,7 @@ function Landing() {
                         {/* Course Cards */}
                         <div className="flex flex-wrap gap-12 justify-start items-center">
                             {/* Repeat this for each featured course */}
-                            {courses.state == "hasValue" && featuredCourses.map(fc => <Course key={fc.id} course={fc} updateDel={false} />)}
+                            {courses.state == "hasValue" && featuredCourses?.map(fc => <Course key={fc.id} course={fc} updateDel={false} />)}
                         </div>
                     </div>
                 </section>
@@ -64,7 +65,7 @@ function Landing() {
                         <p>&copy; 2023 Course App. All rights reserved.</p>
                     </div>
                 </footer>
-            </div >
+            </div >}
         </>
     )
 }

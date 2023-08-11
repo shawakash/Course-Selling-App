@@ -8,12 +8,12 @@ const Nav = () => {
     const [state, setState] = useState(false);
 
     useEffect(() => {
-        if(localStorage.getItem("token")) {
+        if(sessionStorage.getItem("token")) {
             setState(true);
         } else {
             setState(false);
         }
-    }, [state, localStorage.getItem("token")])
+    }, [state, sessionStorage.getItem("token")])
 
     return (
         <>
@@ -28,7 +28,7 @@ const Nav = () => {
                                 {!state && <Link to={"/login"}><li className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Login</li></Link>}
                                 {!state && <Link to={"/register"}><li className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Register</li></Link>}
                                 {state && <li onClick={(e) => {
-                                    localStorage.clear();
+                                    sessionStorage.clear();
                                     setState(false);
                                     navigate("/login")
                                 }} className="hover:text-blue-500 cursor-pointer transition-all hover:scale-125 active:scale-95">Logout</li>}

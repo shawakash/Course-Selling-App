@@ -41,7 +41,7 @@ const PurchasedCourse = () => {
       <h1  className="text-3xl drop-shadow-md hover:drop-shadow-2xl transition-all font-semibold tracking-wide font-mono mb-4">{courses.length > 0 ? "Purchased Courses" : <Link to={"/courses"}>Start Learning</Link>}</h1>
         <div className="flex flex-wrap gap-7 justify-center items-center">
           {courses.map(course => (
-            <Card key={course.id} course={course} />
+            <Card key={course._id} course={course} />
           ))}
         </div>
       </div>

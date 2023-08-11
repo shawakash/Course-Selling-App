@@ -7,7 +7,7 @@ import { toast } from 'react-hot-toast';
 const RestrictedRoute = () => {
     return (
         <>
-            {localStorage.getItem("token") ? <Navigate to={"/"} /> : <Outlet />}
+            {sessionStorage.getItem("token") ? <Navigate to={"/"} /> : <Outlet />}
         </>
     )
 }

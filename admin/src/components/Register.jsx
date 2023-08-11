@@ -14,12 +14,12 @@ function Register() {
     const passwordRef = useRef(null);
     const emailRef = useRef(null);
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     useEffect(() => {
         if(token) {
             toast.success("Clearing Client Data");
-            localStorage.clear();
+            sessionStorage.clear();
         }
     }, [])
 
@@ -41,7 +41,7 @@ function Register() {
             usernameRef.current.value = '';
             passwordRef.current.value = '';
             emailRef.current.value = '';
-            localStorage.setItem("token", response.data.token);
+            sessionStorage.setItem("token", response.data.token);
             toast.success(response.data.message);
             navigate("/");
             setLoader(false);

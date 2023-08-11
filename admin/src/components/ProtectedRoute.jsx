@@ -4,7 +4,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 const ProtectedRoute = () => {
 
     return (<>
-        {localStorage.getItem("token") ? <Outlet /> : <Navigate to={"/login"} /> }
+        {sessionStorage.getItem("token") ? <Outlet /> : <Navigate to={"/login"} /> }
     </>)
 
 }

@@ -9,11 +9,11 @@ const Course = () => {
   const {slug} = useParams();
   const [purCourses, setPurCourse] = useRecoilState(pCourses);
   const allCourses = useRecoilValue(localCourse);
-  const [course, setCourse] = useState(purCourses.find(cou => cou.id == slug) || {})
+  const [course, setCourse] = useState(purCourses.find(cou => cou._id == slug) || {})
   const [purchase, setPurchase] = useState(false);
   useEffect(() => {
     if(!Object.keys(course).length || course == undefined) {
-      const c = allCourses.find(co => co.id == slug);
+      const c = allCourses.find(co => co._id == slug);
       setCourse(c);
       setPurchase(false);
     } else {
@@ -49,7 +49,7 @@ const Course = () => {
 
   return (
     <>
-      <div className="bg-gray-100 min-h-screen p-10">
+      {Object.keys(course).length && <div className="bg-gray-100 min-h-screen p-10">
         <div className="max-w-2xl mx-auto bg-white p-6 flex flex-col gap-y-5 shadow-md rounded-lg">
           <div className="">
           <h1 className="text-3xl font-semibold mb-4">{course.title}</h1>
@@ -66,7 +66,7 @@ const Course = () => {
             Enroll Now
           </button>}
         </div>
-      </div >
+      </div >}
     </>
   )
 }

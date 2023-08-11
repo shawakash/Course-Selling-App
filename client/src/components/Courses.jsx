@@ -14,7 +14,7 @@ const Courses = () => {
                 <h1 className="text-3xl drop-shadow-md hover:drop-shadow-2xl transition-all font-semibold tracking-wide font-mono mb-4">Available Courses</h1>
                 <div className="flex flex-wrap gap-7 justify-center items-center">
                     {courses.map(course => (
-                        <Card key={course.id} course={course} />
+                        <Card key={course._id} course={course} />
                     ))}
                 </div>
             </div>

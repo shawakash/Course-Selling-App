@@ -11,7 +11,7 @@ app.use(cors());
 
 // Admin routes
 app.use('/admin', adminRoute);
-app.use('/user', userRoute);
+app.use('/users', userRoute);
 
 connect();
 

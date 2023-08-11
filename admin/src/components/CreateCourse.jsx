@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { baseUrl } from "./Register";
-import { useLocalStorage } from "../assets/useLocalStorage";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { coursesList, loading, localCourses } from "../recoil/atom";
 import { toast } from "react-hot-toast";
@@ -32,7 +31,7 @@ function CreateCourse() {
             url: `${baseUrl}/admin/courses`,
             method:"POST",
             headers: {
-                Authorization: (localStorage.getItem("token")).toString(),
+                Authorization: (sessionStorage.getItem("token")).toString(),
                 "Content-type": "application/json"
             },
             data: {
@@ -64,7 +63,7 @@ function CreateCourse() {
                 toast.error(err.message);
                 if(err.response.status == 403) {
                     toast.error("Please Log in");
-                    localStorage.clear();
+                    sessionStorage.clear();
                     navigate("/")
                 }
             }

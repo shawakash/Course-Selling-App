@@ -31,7 +31,7 @@ const Course = ({ course, updateDel = true }) => {
             baseURL: baseUrl,
             method: "PUT",
             headers: {
-                Authorization: localStorage.getItem("token"),
+                Authorization: sessionStorage.getItem("token"),
                 "Content-Type": "application/json"
             },
             data: {
@@ -73,7 +73,7 @@ const Course = ({ course, updateDel = true }) => {
                 setLoader(false);
                 if (err.response.status == 403) {
                     toast.error("Please Log in");
-                    localStorage.clear();
+                    sessionStorage.clear();
                     navigate("/")
                 }
             }
@@ -87,7 +87,7 @@ const Course = ({ course, updateDel = true }) => {
             url: `/admin/courses/${course.id}`,
             baseURL: baseUrl,
             headers: {
-                Authorization: localStorage.getItem("token"),
+                Authorization: sessionStorage.getItem("token"),
                 "Content-Type": "application/json"
             }
         }).then(response => {
@@ -100,11 +100,11 @@ const Course = ({ course, updateDel = true }) => {
         }).catch(err => {
             console.log(err);
             if (err) {
-                toast.error(err.message);
+                toast.error(err.response.data.message);
                 setLoader(false);
                 if (err.response.status == 403) {
                     toast.error("Please Log in");
-                    localStorage.clear();
+                    sessionStorage.clear();
                     navigate("/")
                 }
             }

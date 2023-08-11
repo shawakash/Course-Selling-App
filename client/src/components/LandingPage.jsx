@@ -53,7 +53,7 @@ const LandingPage = () => {
                         {/* Course Cards */}
                         <div className="flex flex-wrap gap-12 justify-start items-center">
                             {/* Repeat this for each featured course */}
-                            {courses.state == "hasValue" && featuredCourses.map(fc => <Card key={fc.id} course={fc} />)}
+                            {courses.state == "hasValue" && featuredCourses.map(fc => <Card key={fc._id} course={fc} />)}
                         </div>
                     </div>
                 </section>

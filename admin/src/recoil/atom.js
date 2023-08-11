@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { atom, selector } from 'recoil'
-import { useLocalStorage } from '../assets/useLocalStorage';
 import { baseUrl } from '../components/Register';
 
 
@@ -26,14 +25,14 @@ export const coursesList = atom({
                     baseURL: baseUrl,
                     method: "GET",
                     headers: {
-                        Authorization: localStorage.getItem("token"),
+                        Authorization: sessionStorage.getItem("token"),
                         "Content-type": "application/json"
                     },
                 });
                     
                 return response.data.courses;
             } catch (error) {
-                localStorage.clear();
+                sessionStorage.clear();
             }
         }
     })

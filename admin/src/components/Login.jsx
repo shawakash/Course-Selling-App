@@ -15,12 +15,12 @@ function Login() {
     const usernameRef = useRef(null);
     const passwordRef = useRef(null);
 
-    const token = localStorage.getItem("token")
+    const token = sessionStorage.getItem("token")
 
     useEffect(() => {
         if(token) {
             toast.success("Clearing Client Data");
-            localStorage.clear();
+            sessionStorage.clear();
         }
     }, [token])
 
@@ -42,7 +42,8 @@ function Login() {
             });
             usernameRef.current.value = "";
             passwordRef.current.value = "";
-            localStorage.setItem("token", response.data.token);
+            console.log(response.data.token)
+            sessionStorage.setItem("token", response.data.token)
             // setToken(response.data.token)
             toast.success(response.data.message);
             setloader(false);

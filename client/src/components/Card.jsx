@@ -11,7 +11,7 @@ const Card = ({ course }) => {
 
 
             <div>
-                <Link to={`/courses/${course.id}`}>
+                <Link to={`/courses/${course._id}`}>
                     <div className="bg-white rounded-xl shadow-md p-6 w-[400px] z-0 hover:shadow-2xl transition-all cursor-pointer">
                         <img src={course.imageUrl} alt={course.title} className="w-full h-auto mb-4 rounded-lg" />
                         <h2 className="text-lg font-semibold mb-2">{course.title}</h2>
