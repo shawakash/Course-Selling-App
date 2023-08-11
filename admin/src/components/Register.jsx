@@ -1,16 +1,15 @@
 import React, { useEffect, useRef } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { loading, user } from "../recoil/atom";
+import { useSetRecoilState } from "recoil";
+import { loading } from "../recoil/atom";
 import axios from "axios";
-import { useLocalStorage } from "../assets/useLocalStorage";
-import { Toaster, toast } from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom';
 
 export const baseUrl = `http://localhost:3000`;
 
 /// File is incomplete. You need to add input boxes to take input for users to register.
 function Register() {
-    const [loader, setLoader] = useRecoilState(loading);
+    const setLoader = useSetRecoilState(loading);
     const usernameRef = useRef(null);
     const passwordRef = useRef(null);
     const emailRef = useRef(null);

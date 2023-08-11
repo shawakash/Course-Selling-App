@@ -13,6 +13,7 @@ import PurchasedCourse from './components/PurchasedCourse'
 import ProtectedRoute from './components/ProtectedRoute'
 import Nav from './components/Nav'
 import Restricted from './components/Restricted'
+import NoMatch from './components/NoMatch'
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
           </Route>
+          <Route path="*" element={<NoMatch />} />
         </Routes>
       </Router>
     </>

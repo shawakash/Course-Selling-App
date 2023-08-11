@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 
 function CreateCourse() {
 
-    const [loader, setLoader] = useRecoilState(loading);
+    const setLoader = useSetRecoilState(loading);
     const navigate = useNavigate();
     const setLocalCourses = useSetRecoilState(localCourses);
     const [published, setPub] = useState(false);
