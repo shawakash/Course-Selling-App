@@ -1,5 +1,5 @@
 const express = require("express");
-const route = express().Route();
+const route = express.Router();
 const jwt = require("jsonwebtoken");
 const { User, Course } = require("../db/db");
 const USER_SECRET_KEY = "2018";

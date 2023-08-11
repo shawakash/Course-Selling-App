@@ -1,6 +1,6 @@
 const express = require("express");
 const { Admin, Course } = require("../db/db");
-const route = express().Router();
+const route = express.Router();
 const ADMIN_SECRET_KEY = "2003";
 const jwt = require("jsonwebtoken");
 
@@ -112,11 +112,11 @@ route.put('/courses/:courseId', adminAuth, async (req, res) => {
 route.get('/courses', adminAuth, async (req, res) => {
     // logic to get all courses
     const authAdmin = req.admin;
-    const dbAdmin = await Admin.findById(authAdmin.id).populate("createdCourses").populate("subscribers");
+    const dbAdmin = await Admin.findById(authAdmin.id).populate("createdCourses");
     return res.status(200).json({ courses: dbAdmin.createdCourses })
 });
 
-app.delete("/courses/:courseId", adminAuth, async (req, res) => {
+route.delete("/courses/:courseId", adminAuth, async (req, res) => {
     const {courseId} = req.params;
     let course = await Course.findById(courseId);
     if (!course || course.length == 0) {
