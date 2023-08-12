@@ -18,7 +18,6 @@ import CoursePage from './components/CoursePage';
 // based on the route.
 // You can also try going to /random and see what happens (a route that doesnt exist)
 function App() {
-    const client = useRecoilValue(user);
     
     return (<>
         <Toaster /> 
