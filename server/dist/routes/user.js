@@ -29,10 +29,12 @@ const userAuth = (req, res, next) => {
         if (err) {
             return res.status(403).json({ message: "Forbidden!" });
         }
-        return decoded;
+        if (!decoded || typeof decoded == "string") {
+            return res.status(403).json({ message: "Forbidden!" });
+        }
+        req.headers["userId"] = decoded._id;
+        next();
     });
-    req.body.user = decoded;
-    next();
 };
 // User routes
 route.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -47,7 +49,7 @@ route.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     const object = new db_1.User({ username, password });
     yield object.save();
-    const token = jsonwebtoken_1.default.sign({ username, _id: object._id }, config_1.USER_SECRET_KEY);
+    const token = jsonwebtoken_1.default.sign({ _id: object._id }, config_1.USER_SECRET_KEY);
     return res.status(200).json({ message: 'User created successfully', token });
 }));
 route.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,7 +65,7 @@ route.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* (
     if (isUser.password !== password) {
         return res.status(400).json({ message: "Password Error :(" });
     }
-    const token = jsonwebtoken_1.default.sign({ username, _id: isUser._id }, config_1.USER_SECRET_KEY);
+    const token = jsonwebtoken_1.default.sign({ _id: isUser._id }, config_1.USER_SECRET_KEY);
     return res.status(200).json({ message: "Logged in successfully", token, user: isUser });
 }));
 route.get('/courses', userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -77,8 +79,8 @@ route.get('/courses', userAuth, (req, res) => __awaiter(void 0, void 0, void 0, 
 route.post('/courses/:courseId', userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // logic to purchase a course
     const { courseId } = req.params;
-    const user = req.body.user;
-    const userData = yield db_1.User.findById(user._id);
+    const { userId } = req.headers;
+    const userData = yield db_1.User.findById(userId);
     const course = yield db_1.Course.findById(courseId);
     if (!course || Object.keys(course).length == 0) {
         return res.status(400).json({ message: "Invalid Params" });
@@ -91,11 +93,14 @@ route.post('/courses/:courseId', userAuth, (req, res) => __awaiter(void 0, void 
         yield course.save();
         return res.status(200).json({ message: 'Course purchased successfully' });
     }
+    else {
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
 }));
 route.get('/purchasedCourses', userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // logic to view purchased courses
-    const user = req.body.user;
-    const data = yield db_1.User.findById(user.id).populate('purchasedCourses');
+    const { userId } = req.headers;
+    const data = yield db_1.User.findById(userId).populate('purchasedCourses');
     return res.status(200).json({ purchasedCourses: data === null || data === void 0 ? void 0 : data.purchasedCourses });
 }));
 exports.default = route;

@@ -16,10 +16,12 @@ const userAuth = (req: Request, res: Response, next: NextFunction) => {
         if (err) {
             return res.status(403).json({ message: "Forbidden!" });
         }
-        return decoded;
+        if(!decoded || typeof decoded == "string") {
+            return res.status(403).json({ message: "Forbidden!" });
+        }
+        req.headers["userId"] = decoded._id;
+        next();
     });
-    req.body.user = decoded;
-    next();
 }
 
 // User routes
@@ -35,7 +37,7 @@ route.post('/signup', async (req: Request, res: Response) => {
     }
     const object = new User({ username, password });
     await object.save();
-    const token = jwt.sign({ username, _id: object._id }, USER_SECRET_KEY);
+    const token = jwt.sign({ _id: object._id }, USER_SECRET_KEY);
     return res.status(200).json({ message: 'User created successfully', token });
 });
 
@@ -52,7 +54,7 @@ route.post('/login', async (req: Request, res: Response) => {
     if (isUser.password !== password) {
         return res.status(400).json({ message: "Password Error :(" });
     }
-    const token = jwt.sign({ username, _id: isUser._id }, USER_SECRET_KEY);
+    const token = jwt.sign({ _id: isUser._id }, USER_SECRET_KEY);
     return res.status(200).json({ message: "Logged in successfully", token, user: isUser });
 });
 
@@ -68,8 +70,9 @@ route.get('/courses', userAuth, async (req: Request, res: Response) => {
 route.post('/courses/:courseId', userAuth, async (req: Request, res: Response) => {
     // logic to purchase a course
     const { courseId } = req.params;
-    const user = req.body.user;
-    const userData = await User.findById(user._id);
+     
+    const {userId} = req.headers;
+    const userData = await User.findById(userId);
     const course = await Course.findById(courseId);
     if (!course || Object.keys(course).length == 0) {
         return res.status(400).json({ message: "Invalid Params" });
@@ -81,13 +84,15 @@ route.post('/courses/:courseId', userAuth, async (req: Request, res: Response) =
         await userData.save();
         await course.save();
         return res.status(200).json({ message: 'Course purchased successfully' });
+    } else {
+        return res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
 route.get('/purchasedCourses', userAuth, async (req: Request, res: Response) => {
     // logic to view purchased courses
-    const user = req.body.user;
-    const data = await User.findById(user.id).populate('purchasedCourses');
+    const {userId} = req.headers;
+    const data = await User.findById(userId).populate('purchasedCourses');
     return res.status(200).json({ purchasedCourses: data?.purchasedCourses });
 });
 

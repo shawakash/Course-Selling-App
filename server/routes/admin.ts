@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express'
 import { Admin, AdminRequest, Course, CourseRequest } from "../db/db";
 const route = express.Router();
-import jwt, { JwtPayload, VerifyErrors } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { ADMIN_SECRET_KEY } from '../config';
 
 const adminAuth = (req: Request, res: Response, next: NextFunction) => {
@@ -12,14 +12,16 @@ const adminAuth = (req: Request, res: Response, next: NextFunction) => {
     if (authorization.startsWith("Bearer")) {
         authorization = authorization.split(" ")[1];
     }
-    const decoded = jwt.verify(authorization, ADMIN_SECRET_KEY, (err: any, decoded: any) => {
+    const decoded = jwt.verify(authorization, ADMIN_SECRET_KEY, (err, decoded) => {
         if (err) {
             return res.status(403).json({ message: "Forbidden!" });
         }
-        return decoded;
+        if(!decoded || typeof decoded === 'string' || !decoded._id) {
+            return res.status(403).json({ message: "Forbidden!" });
+        }
+        req.headers["adminId"] = decoded._id;
+        next();
     });
-    req.body.admin = decoded;
-    next();
 }
 
 const editCourse = async (courseId: string, body: CourseRequest) => {
@@ -61,7 +63,7 @@ route.post('/signup', async (req: Request, res: Response) => {
     const createdCourses: string[] = [];
     const object = new Admin({ username, password, createdCourses });
     await object.save();
-    const token = jwt.sign({ username, _id: object._id }, ADMIN_SECRET_KEY);
+    const token = jwt.sign({ _id: object._id }, ADMIN_SECRET_KEY);
     return res.status(200).json({ message: 'Admin created successfully', token , admin: object});
 });
 
@@ -78,7 +80,7 @@ route.post('/login', async (req: Request, res: Response) => {
     if (isAdmin.password !== password) {
         return res.status(400).json({ message: "Password Error :(" });
     }
-    const token = jwt.sign({ username, _id: isAdmin._id }, ADMIN_SECRET_KEY);
+    const token = jwt.sign({ _id: isAdmin._id }, ADMIN_SECRET_KEY);
     return res.status(200).json({ message: "Logged in successfully", token , admin: isAdmin});
 });
 
@@ -86,10 +88,10 @@ route.post('/courses', adminAuth, async (req: Request, res: Response) => {
     // logic to create a course
     try {
         const body: CourseRequest = req.body;
-        const admin = req.body.admin;
-        const course = new Course({ ...body, creator: admin._id, subscribers: [] });
+        const {adminId} = req.headers;
+        const course = new Course({ ...body, creator: adminId, subscribers: [] });
         await course.save();
-        const updateAdmin = await Admin.findById(admin._id);
+        const updateAdmin = await Admin.findById(adminId);
         updateAdmin?.createdCourses.push(course._id);
         await updateAdmin?.save();
         return res.status(200).json({ message: 'Course created successfully', courseId: course._id, course});
@@ -111,8 +113,8 @@ route.put('/courses/:courseId', adminAuth, async (req: Request, res: Response) =
 
 route.get('/courses', adminAuth, async (req: Request, res: Response) => {
     // logic to get all courses
-    const authAdmin = req.body.admin;
-    const dbAdmin = await Admin.findById(authAdmin._id).populate("createdCourses");
+    const {adminId} = req.headers;
+    const dbAdmin = await Admin.findById(adminId).populate("createdCourses");
     return res.status(200).json({ courses: dbAdmin?.createdCourses })
 });
 

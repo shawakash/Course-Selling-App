@@ -29,10 +29,12 @@ const adminAuth = (req, res, next) => {
         if (err) {
             return res.status(403).json({ message: "Forbidden!" });
         }
-        return decoded;
+        if (!decoded || typeof decoded === 'string' || !decoded._id) {
+            return res.status(403).json({ message: "Forbidden!" });
+        }
+        req.headers["adminId"] = decoded._id;
+        next();
     });
-    req.body.admin = decoded;
-    next();
 };
 const editCourse = (courseId, body) => __awaiter(void 0, void 0, void 0, function* () {
     const course = yield db_1.Course.findById(courseId);
@@ -71,7 +73,7 @@ route.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const createdCourses = [];
     const object = new db_1.Admin({ username, password, createdCourses });
     yield object.save();
-    const token = jsonwebtoken_1.default.sign({ username, _id: object._id }, config_1.ADMIN_SECRET_KEY);
+    const token = jsonwebtoken_1.default.sign({ _id: object._id }, config_1.ADMIN_SECRET_KEY);
     return res.status(200).json({ message: 'Admin created successfully', token, admin: object });
 }));
 route.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -87,17 +89,17 @@ route.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* (
     if (isAdmin.password !== password) {
         return res.status(400).json({ message: "Password Error :(" });
     }
-    const token = jsonwebtoken_1.default.sign({ username, _id: isAdmin._id }, config_1.ADMIN_SECRET_KEY);
+    const token = jsonwebtoken_1.default.sign({ _id: isAdmin._id }, config_1.ADMIN_SECRET_KEY);
     return res.status(200).json({ message: "Logged in successfully", token, admin: isAdmin });
 }));
 route.post('/courses', adminAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // logic to create a course
     try {
         const body = req.body;
-        const admin = req.body.admin;
-        const course = new db_1.Course(Object.assign(Object.assign({}, body), { creator: admin._id, subscribers: [] }));
+        const { adminId } = req.headers;
+        const course = new db_1.Course(Object.assign(Object.assign({}, body), { creator: adminId, subscribers: [] }));
         yield course.save();
-        const updateAdmin = yield db_1.Admin.findById(admin._id);
+        const updateAdmin = yield db_1.Admin.findById(adminId);
         updateAdmin === null || updateAdmin === void 0 ? void 0 : updateAdmin.createdCourses.push(course._id);
         yield (updateAdmin === null || updateAdmin === void 0 ? void 0 : updateAdmin.save());
         return res.status(200).json({ message: 'Course created successfully', courseId: course._id, course });
@@ -118,8 +120,8 @@ route.put('/courses/:courseId', adminAuth, (req, res) => __awaiter(void 0, void 
 }));
 route.get('/courses', adminAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // logic to get all courses
-    const authAdmin = req.body.admin;
-    const dbAdmin = yield db_1.Admin.findById(authAdmin._id).populate("createdCourses");
+    const { adminId } = req.headers;
+    const dbAdmin = yield db_1.Admin.findById(adminId).populate("createdCourses");
     return res.status(200).json({ courses: dbAdmin === null || dbAdmin === void 0 ? void 0 : dbAdmin.createdCourses });
 }));
 route.delete("/courses/:courseId", adminAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
