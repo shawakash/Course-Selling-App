@@ -53,7 +53,7 @@ route.post('/login', async (req, res) => {
         return res.status(400).json({ message: "Password Error :(" });
     }
     const token = jwt.sign({ username, id: isUser._id }, USER_SECRET_KEY);
-    return res.status(200).json({ message: "Logged in successfully", token });
+    return res.status(200).json({ message: "Logged in successfully", token, user: isUser });
 });
 
 route.get('/courses', userAuth, async (req, res) => {

@@ -62,7 +62,7 @@ route.post('/signup', async (req, res) => {
     const object = new Admin({ username, password, createdCourses });
     await object.save();
     const token = jwt.sign({ username, id: object._id }, ADMIN_SECRET_KEY);
-    return res.status(200).json({ message: 'Admin created successfully', token });
+    return res.status(200).json({ message: 'Admin created successfully', token , admin: object});
 });
 
 route.post('/login', async (req, res) => {
@@ -79,7 +79,7 @@ route.post('/login', async (req, res) => {
         return res.status(400).json({ message: "Password Error :(" });
     }
     const token = jwt.sign({ username, id: isAdmin._id }, ADMIN_SECRET_KEY);
-    return res.status(200).json({ message: "Logged in successfully", token });
+    return res.status(200).json({ message: "Logged in successfully", token , admin: isAdmin});
 });
 
 route.post('/courses', adminAuth, async (req, res) => {
@@ -92,7 +92,7 @@ route.post('/courses', adminAuth, async (req, res) => {
         const updateAdmin = await Admin.findById(admin.id);
         updateAdmin.createdCourses.push(course._id);
         await updateAdmin.save();
-        return res.status(200).json({ message: 'Course created successfully', courseId: course._id });
+        return res.status(200).json({ message: 'Course created successfully', courseId: course._id, course});
     } catch (error) {
         return res.status(500).json({ message: 'Internal Server Error', err: error });
     }
