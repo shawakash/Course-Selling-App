@@ -1,10 +1,32 @@
-const mongoose = require("mongoose");
-const mongooseUri = `mongodb+srv://admin-akash:220104008@cluster0.kcycili.mongodb.net/courses`
+import mongoose from 'mongoose';
+import { mongooseUri } from '../config';
 
 const connect = () => {
-    mongoose.connect(mongooseUri, { useNewUrlParser: true, useUnifiedTopology: true, dbName: "courses" })
+    mongoose.connect(mongooseUri, { useNewUrlParser: true, useUnifiedTopology: true, dbName: "courses" } as mongoose.ConnectOptions)
 
 }
+
+export type UserRequest = {
+  username: string,
+  password: string,
+
+}
+
+export type AdminRequest = {
+  username: string,
+  password: string,
+
+}
+export type CourseRequest = {
+  title: string,
+  description: string,
+  price: number,
+  imageLink: string,
+  published: boolean,
+
+}
+
+
 
 // Define mongoose schemas
 const userSchema = new mongoose.Schema({
@@ -41,7 +63,7 @@ const Admin = mongoose.model('Course_Admin', adminSchema);
 const Course = mongoose.model('Course', courseSchema);
 
 
-module.exports = {
+export {
     User,
     Admin,
     Course,
