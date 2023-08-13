@@ -9,7 +9,8 @@ import { toast } from "react-hot-toast";
 export type AdminType = {
     username: string,
     password: string,
-    _id: string
+    _id: string,
+    createdCourses: string[],
 }
 
 /// File is incomplete. You need to add input boxes to take input for users to login.

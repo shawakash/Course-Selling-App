@@ -1,9 +1,9 @@
-const express = require('express');
+import express from 'express'
 const app = express();
-const { connect } = require('./db/db');
-const cors = require("cors");
-const adminRoute = require("./routes/admin");
-const userRoute = require("./routes/user");
+import { connect } from './db/db';
+import cors from 'cors'
+import adminRoute from "./routes/admin";
+import userRoute from "./routes/user";
 app.use(express.json());
 app.use(cors());
 

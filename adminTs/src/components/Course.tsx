@@ -12,7 +12,9 @@ export type Coursetype = {
     imageLink: string,
     price: number,
     published: boolean,
-    _id?: string
+    _id?: string,
+    creator: string,
+    subscribers: string[] 
 }
 
 type CourseProps = {
