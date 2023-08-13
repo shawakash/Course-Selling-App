@@ -14,9 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const db_1 = require("../db/db");
-const config_1 = require("../config");
 const route = express_1.default.Router();
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = require("../config");
 const adminAuth = (req, res, next) => {
     let { authorization } = req.headers;
     if (!authorization) {
@@ -98,8 +98,8 @@ route.post('/courses', adminAuth, (req, res) => __awaiter(void 0, void 0, void 0
         const course = new db_1.Course(Object.assign(Object.assign({}, body), { creator: admin._id, subscribers: [] }));
         yield course.save();
         const updateAdmin = yield db_1.Admin.findById(admin._id);
-        updateAdmin.createdCourses.push(course._id);
-        yield updateAdmin.save();
+        updateAdmin === null || updateAdmin === void 0 ? void 0 : updateAdmin.createdCourses.push(course._id);
+        yield (updateAdmin === null || updateAdmin === void 0 ? void 0 : updateAdmin.save());
         return res.status(200).json({ message: 'Course created successfully', courseId: course._id, course });
     }
     catch (error) {
@@ -120,7 +120,7 @@ route.get('/courses', adminAuth, (req, res) => __awaiter(void 0, void 0, void 0,
     // logic to get all courses
     const authAdmin = req.body.admin;
     const dbAdmin = yield db_1.Admin.findById(authAdmin._id).populate("createdCourses");
-    return res.status(200).json({ courses: dbAdmin.createdCourses });
+    return res.status(200).json({ courses: dbAdmin === null || dbAdmin === void 0 ? void 0 : dbAdmin.createdCourses });
 }));
 route.delete("/courses/:courseId", adminAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { courseId } = req.params;

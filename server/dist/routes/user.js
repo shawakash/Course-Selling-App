@@ -83,17 +83,19 @@ route.post('/courses/:courseId', userAuth, (req, res) => __awaiter(void 0, void 
     if (!course || Object.keys(course).length == 0) {
         return res.status(400).json({ message: "Invalid Params" });
     }
-    course.subscribers.push(userData._id);
-    // Check for Transcations
-    userData.purchasedCourses.push(course._id);
-    yield userData.save();
-    yield course.save();
-    return res.status(200).json({ message: 'Course purchased successfully' });
+    if (userData) {
+        course.subscribers.push(userData._id);
+        // Check for Transcations
+        userData.purchasedCourses.push(course._id);
+        yield userData.save();
+        yield course.save();
+        return res.status(200).json({ message: 'Course purchased successfully' });
+    }
 }));
 route.get('/purchasedCourses', userAuth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // logic to view purchased courses
     const user = req.body.user;
     const data = yield db_1.User.findById(user.id).populate('purchasedCourses');
-    return res.status(200).json({ purchasedCourses: data.purchasedCourses });
+    return res.status(200).json({ purchasedCourses: data === null || data === void 0 ? void 0 : data.purchasedCourses });
 }));
 exports.default = route;

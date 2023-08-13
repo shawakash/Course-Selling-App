@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express'
 import { Admin, AdminRequest, Course, CourseRequest } from "../db/db";
-import { ADMIN_SECRET_KEY } from '../config';
 const route = express.Router();
 import jwt, { JwtPayload, VerifyErrors } from 'jsonwebtoken';
+import { ADMIN_SECRET_KEY } from '../config';
 
 const adminAuth = (req: Request, res: Response, next: NextFunction) => {
     let { authorization } = req.headers;
@@ -12,7 +12,7 @@ const adminAuth = (req: Request, res: Response, next: NextFunction) => {
     if (authorization.startsWith("Bearer")) {
         authorization = authorization.split(" ")[1];
     }
-    const decoded = jwt.verify(authorization, ADMIN_SECRET_KEY, (err: VerifyErrors, decoded: JwtPayload) => {
+    const decoded = jwt.verify(authorization, ADMIN_SECRET_KEY, (err: any, decoded: any) => {
         if (err) {
             return res.status(403).json({ message: "Forbidden!" });
         }
@@ -58,7 +58,7 @@ route.post('/signup', async (req: Request, res: Response) => {
     if (admin) {
         return res.status(403).json({ message: "username exists :)" });
     }
-    const createdCourses = [];
+    const createdCourses: string[] = [];
     const object = new Admin({ username, password, createdCourses });
     await object.save();
     const token = jwt.sign({ username, _id: object._id }, ADMIN_SECRET_KEY);
@@ -90,8 +90,8 @@ route.post('/courses', adminAuth, async (req: Request, res: Response) => {
         const course = new Course({ ...body, creator: admin._id, subscribers: [] });
         await course.save();
         const updateAdmin = await Admin.findById(admin._id);
-        updateAdmin.createdCourses.push(course._id);
-        await updateAdmin.save();
+        updateAdmin?.createdCourses.push(course._id);
+        await updateAdmin?.save();
         return res.status(200).json({ message: 'Course created successfully', courseId: course._id, course});
     } catch (error) {
         return res.status(500).json({ message: 'Internal Server Error', err: error });
@@ -113,7 +113,7 @@ route.get('/courses', adminAuth, async (req: Request, res: Response) => {
     // logic to get all courses
     const authAdmin = req.body.admin;
     const dbAdmin = await Admin.findById(authAdmin._id).populate("createdCourses");
-    return res.status(200).json({ courses: dbAdmin.createdCourses })
+    return res.status(200).json({ courses: dbAdmin?.createdCourses })
 });
 
 route.delete("/courses/:courseId", adminAuth, async (req: Request, res: Response) => {
